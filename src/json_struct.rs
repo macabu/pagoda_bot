@@ -1,7 +1,5 @@
 /**
  * Structs for matching the json data response.
- * Functions are in case the response doesn't contain such values.
- *
  **/
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -76,51 +74,67 @@ pub struct Sys {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(default)]
 pub struct OWM {
-    #[serde(default = "default_coord")]
     pub coord: Coord,
-    #[serde(default = "default_weather")]
     pub weather: Vec<Weather>,
-    #[serde(default = "default_basew")]
     pub base: String,
-    #[serde(default = "default_mainw")]
     pub main: Main,
-    #[serde(default = "default_wind")]
     pub wind: Wind,
-    #[serde(default = "default_clouds")]
     pub clouds: Clouds,
-    #[serde(default = "default_rain")]
     pub rain: Rain,
-    #[serde(default = "default_snow")]
     pub snow: Snow,
-    #[serde(default = "default_dt")]
     pub dt: u32,
-    #[serde(default = "default_sys")]
     pub sys: Sys,
-    #[serde(default = "default_id")]
     pub id: i32,
-    #[serde(default = "default_name")]
     pub name: String,
     pub cod: i32
 }
 
-// TODO: Is it possible to apply generics?
-fn default_rain() -> Rain {
-    Rain {
-        _3h: 0.0
-    }
-}
-
-fn default_snow() -> Snow {
-    Snow {
-        _3h: 0.0
-    }
-}
-
-fn default_coord() -> Coord {
-    Coord {
-        lon: 0.0,
-        lat: 0.0
+impl Default for OWM {
+    fn default() -> Self {
+        OWM {
+            coord: Coord {
+                lon: 0.0,
+                lat: 0.0
+            },
+            weather: default_weather(),
+            base: String::new(),
+            main: Main {
+                temp: 0.0,
+                pressure: 0.0,
+                humidity: 0.0,
+                temp_min: 0.0,
+                temp_max: 0.0,
+                sea_level: 0.0,
+                grnd_level: 0.0
+            },
+            wind: Wind {
+                speed: 0.0,
+                deg: 0.0
+            },
+            clouds: Clouds {
+                all: 0.0
+            },
+            rain: Rain {
+                _3h: 0.0
+            },
+            snow: Snow {
+                _3h: 0.0
+            },
+            dt: 0,
+            sys: Sys {
+                _type: 0,
+                id: 0,
+                message: 0.0,
+                country: String::new(),
+                sunrise: 0,
+                sunset: 0        
+            },
+            id: 0,
+            name: String::new(),
+            cod: 0        
+        }
     }
 }
 
@@ -133,56 +147,4 @@ fn default_weather() -> Vec<Weather> {
         icon: String::new()
     });
     r
-}
-
-fn default_clouds() -> Clouds {
-    Clouds {
-        all: 0.0
-    }
-}
-
-fn default_sys() -> Sys {
-    Sys {
-        _type: 0,
-        id: 0,
-        message: 0.0,
-        country: String::new(),
-        sunrise: 0,
-        sunset: 0        
-    }
-}
-
-fn default_wind() -> Wind {
-    Wind {
-        speed: 0.0,
-        deg: 0.0
-    }
-}
-
-fn default_mainw() -> Main {
-    Main {
-        temp: 0.0,
-        pressure: 0.0,
-        humidity: 0.0,
-        temp_min: 0.0,
-        temp_max: 0.0,
-        sea_level: 0.0,
-        grnd_level: 0.0
-    }
-}
-
-fn default_basew() -> String {
-    String::new()
-}
-
-fn default_dt() -> u32 {
-    0
-}
-
-fn default_id() -> i32 {
-    0
-}
-
-fn default_name() -> String {
-    String::new()
 }

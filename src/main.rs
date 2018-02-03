@@ -39,7 +39,8 @@ fn send_weather_data(api: Api, message: Message, handle: &Handle) {
 
     let emoji_main = match ret.weather.get(0).unwrap().main.as_ref() {
         "Clear" => "☀️",
-        "Mist" | "Clouds" => "☁️",
+        "Clouds" => "☁️",
+        "Mist" => "🌁",
         "Rain" => "☔️",
         "Thunder" => "⚡️",
         "Snow" => "❄️",
@@ -68,7 +69,18 @@ fn send_weather_data(api: Api, message: Message, handle: &Handle) {
 }
 
 fn send_help(api: Api, message: Message, handle: &Handle) {
-    let response = api.send(message.chat.text("💡 *Help - Pagoda Bot*\nUse /w followed by the city, and country code if needed.\ne.g.: moscow,ru")
+    let response = api.send(message.chat.text("💡 *Help - Pagoda Bot*
+        Use /w followed by the city, and country code if needed.
+        e.g.: moscow,ru
+
+        Weather Representation:
+        ☀\tClear
+        ☁️\tClouds
+        🌁\tMist
+        ☔️\tRain
+        ⚡\t️Thunder
+        ❄️\tSnow
+        ")
         .parse_mode(ParseMode::Markdown)
     );
 
@@ -82,8 +94,8 @@ fn popo(api: Api, message: Message, handle: &Handle) {
         MessageKind::Text {ref data, ..} => {
             let cmd: Vec<&str> = data.split(" ").collect();
             match cmd.first().unwrap().as_ref() {
-                "/tempo" | "/w" => send_weather_data,
-                "/ajuda" | "/help" => send_help,
+                "/tempo" | "/weather" | "/w" => send_weather_data,
+                "/ajuda" | "/help" | "/h" => send_help,
                 _ => return
             }
         }
