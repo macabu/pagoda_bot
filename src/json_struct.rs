@@ -91,6 +91,17 @@ pub struct OWM {
     pub cod: i32
 }
 
+impl Default for Weather {
+    fn default() -> Self {
+        Weather {
+            id: 0,
+            main: String::new(),
+            description: String::new(),
+            icon: String::new()
+        }
+    }
+}
+
 impl Default for OWM {
     fn default() -> Self {
         OWM {
@@ -98,7 +109,7 @@ impl Default for OWM {
                 lon: 0.0,
                 lat: 0.0
             },
-            weather: default_weather(),
+            weather: vec![Weather::default()],
             base: String::new(),
             main: Main {
                 temp: 0.0,
@@ -136,15 +147,4 @@ impl Default for OWM {
             cod: 0        
         }
     }
-}
-
-fn default_weather() -> Vec<Weather> {
-    let mut r = Vec::new();
-    r.push(Weather {
-        id: 0,
-        main: String::new(),
-        description: String::new(),
-        icon: String::new()
-    });
-    r
 }
