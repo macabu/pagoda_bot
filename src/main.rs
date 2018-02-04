@@ -21,6 +21,9 @@ use telegram_bot::prelude::*;
 
 use weather_data::fetch_weather_data;
 
+use std::ops::Deref;
+use std::collections::HashMap;
+
 fn send_weather_data(api: Api, message: Message, handle: &Handle) {
     let msg = match message.kind {
         MessageKind::Text {ref data, ..} => data,
@@ -30,32 +33,45 @@ fn send_weather_data(api: Api, message: Message, handle: &Handle) {
     let parameters: Vec<&str> = msg.split(" ").collect();
 
     let city_name = match parameters.get(1) {
-        Some(x) => x,
+        Some(cn) => cn,
         _ => ""
     };
 
     let url = format!("http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&lang=pt&APPID={}", city_name, env::var("OWM_KEY").unwrap());
     let ret = fetch_weather_data(&url).unwrap();
 
-    let emoji_main = match ret.weather.get(0).unwrap().main.as_ref() {
-        "Clear" => "☀️",
-        "Clouds" => "☁️",
-        "Mist" => "🌁",
-        "Rain" => "☔️",
-        "Thunder" => "⚡️",
-        "Snow" => "❄️",
+    let weather_emoji_hm : HashMap<&str, &str> = [
+        ("Clear", "☀️"),
+        ("Clouds", "☁️"),
+        ("Mist", "🌁"),
+        ("Rain", "☔️"),
+        ("Thunder", "⚡️"),
+        ("Snow", "❄️"),
+    ].iter()
+    .cloned()
+    .collect();
+
+    let weather_emoji = match weather_emoji_hm.get(&ret.weather.get(0).unwrap().main.as_ref()) {
+        Some(we) => we,
         _ => ""
     };
 
-    let country_flag = match ret.sys.country.as_ref() {
-        "BR" => "🇧🇷",
-        "RU" => "🇷🇺",
-        "GB" => "🇬🇧",
-        "US" => "🇺🇸",
-        _ => ret.sys.country.as_ref()
+    // Populate this with all countries when I am able to see their respective emojis
+    let country_flag_hm : HashMap<&str, &str> = [
+        ("BR", "🇧🇷"),
+        ("RU", "🇷🇺"),
+        ("GB", "🇬🇧"),
+        ("US", "🇺🇸"),
+    ].iter()
+    .cloned()
+    .collect();
+
+    let country_flag = match country_flag_hm.get(&ret.sys.country.as_ref()) {
+        Some(cf) => cf,
+        _ => ret.sys.country.deref()
     };
 
-    let rth = format!("{} {} {}\n{:.1} °C ({:.0} ~ {:.0})", emoji_main, ret.name, country_flag, ret.main.temp, ret.main.temp_min, ret.main.temp_max);
+    let rth = format!("{} {} {}\n{:.1} °C ({:.0} ~ {:.0})", weather_emoji, ret.name, country_flag, ret.main.temp, ret.main.temp_min, ret.main.temp_max);
 
     if (parameters.len() > 1) && (ret.cod == 200) {
         let response = api.send(message.chat.text(rth).
