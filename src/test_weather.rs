@@ -28,12 +28,16 @@ fn pravilno_nazvanie() {
 /**
  * This tests if the the city id matches with the one being searched,
  * in the case where the city doesn't exist.
+ *
+ * Attention!
+ * This test checks for the return code to equal "404" (string) because
+ * that's what the OWM API returns.
  **/
 #[test]
 fn nepravilno_nazvanie() {
     let ret = helper_test_city_id("asdasdsa", env::var("OWM_KEY").unwrap().as_ref());
     assert_eq!(0, ret.id);
-    assert_eq!(404, ret.cod);
+    assert_eq!("404", ret.cod);
 }
 
 /**
