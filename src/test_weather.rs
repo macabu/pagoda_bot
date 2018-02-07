@@ -20,6 +20,8 @@ fn helper_test_city_id<'a>(city_name: &'a str, api_key: &'a str) -> OWM {
  **/
 #[test]
 fn pravilno_nazvanie() {
+    dotenv().ok();
+
     let ret = helper_test_city_id("moscow,ru", env::var("OWM_KEY").unwrap().as_ref());
     assert_eq!(524901, ret.id);
     assert_eq!(200, ret.cod);
@@ -35,6 +37,8 @@ fn pravilno_nazvanie() {
  **/
 #[test]
 fn nepravilno_nazvanie() {
+    dotenv().ok();
+
     let ret = helper_test_city_id("asdasdsa", env::var("OWM_KEY").unwrap().as_ref());
     assert_eq!(0, ret.id);
     assert_eq!("404", ret.cod);
