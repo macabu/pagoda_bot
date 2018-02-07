@@ -1,3 +1,5 @@
+extern crate serde_json;
+
 /**
  * Structs for matching the json data response.
  **/
@@ -73,6 +75,12 @@ pub struct Sys {
     pub sunset: u64
 }
 
+/**
+ * `cod` is defined as a `serde_json::Value` because the OWM API is not strict
+ * on its type. Some times it's an integer (200, for example) and other times
+ * it's a string ("404", for example). The `serde_json::Value` abstraction
+ * handles that well enough for us.
+ **/
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(default)]
 pub struct OWM {
@@ -88,7 +96,7 @@ pub struct OWM {
     pub sys: Sys,
     pub id: i32,
     pub name: String,
-    pub cod: i32
+    pub cod: serde_json::Value
 }
 
 impl Default for Weather {
@@ -144,7 +152,7 @@ impl Default for OWM {
             },
             id: 0,
             name: String::new(),
-            cod: 0        
+            cod: serde_json::to_value(0).unwrap()
         }
     }
 }
