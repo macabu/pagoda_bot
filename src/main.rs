@@ -21,7 +21,6 @@ use telegram_bot::prelude::*;
 
 use weather_data::fetch_weather_data;
 
-use std::ops::Deref;
 use std::collections::HashMap;
 
 fn send_weather_data(api: Api, message: Message, handle: &Handle) {
@@ -56,20 +55,13 @@ fn send_weather_data(api: Api, message: Message, handle: &Handle) {
         _ => ""
     };
 
-    // Populate this with all countries when I am able to see their respective emojis
-    let country_flag_hm : HashMap<&str, &str> = [
-        ("BR", "🇧🇷"),
-        ("RU", "🇷🇺"),
-        ("GB", "🇬🇧"),
-        ("US", "🇺🇸"),
-    ].iter()
-    .cloned()
-    .collect();
-
-    let country_flag = match country_flag_hm.get(&ret.sys.country.as_ref()) {
-        Some(cf) => cf,
-        _ => ret.sys.country.deref()
-    };
+    let country: &str = ret.sys.country.as_ref();
+    let country_flag: String = country.chars()
+        .map(|x| match x {
+            'A'...'Z' => std::char::from_u32((x as u32) + 127397).unwrap(),
+            _ => x,
+        })
+        .collect();
 
     let rth = format!("{} {} {}\n{:.1} °C ({:.0} ~ {:.0})", weather_emoji, ret.name, country_flag, ret.main.temp, ret.main.temp_min, ret.main.temp_max);
 
