@@ -16,7 +16,13 @@ use json_struct::OWM;
 pub fn fetch_weather_data<'a>(url: &'a str) -> Result<OWM, &'a str> {
     let mut r = reqwest::get(url).unwrap();
 
-    let jr : OWM = r.json().unwrap();
+    let mut jr : OWM = r.json().unwrap();
+
+    jr.cod = if jr.cod.is_number() {
+        jr.cod
+    } else {
+        jr.cod.as_str().unwrap().parse().unwrap()
+    };
 
     Ok(jr)
 }
