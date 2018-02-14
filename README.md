@@ -1,6 +1,8 @@
 pagoda_bot
 ====
 
+[![Build Status](https://travis-ci.org/macabu/pagoda_bot.png?branch=master)](https://travis-ci.org/macabu/pagoda_bot)
+
 A Telegram bot that displays the current weather.  
 
 Configuration  
