@@ -19,7 +19,7 @@ fn helper_test_city_id<'a>(city_name: &'a str, api_key: &'a str) -> OWM {
  * in the case where we get a successful response.
  **/
 #[test]
-fn pravilno_nazvanie() {
+fn test_valid_city_name() {
     dotenv().ok();
 
     let ret = helper_test_city_id("moscow,ru", env::var("OWM_KEY").unwrap().as_ref());
@@ -36,7 +36,7 @@ fn pravilno_nazvanie() {
  * that's what the OWM API returns.
  **/
 #[test]
-fn nepravilno_nazvanie() {
+fn test_invalid_city_name() {
     dotenv().ok();
 
     let ret = helper_test_city_id("asdasdsa", env::var("OWM_KEY").unwrap().as_ref());
@@ -49,7 +49,7 @@ fn nepravilno_nazvanie() {
  * in the case where the API key is invalid.
  **/
 #[test]
-fn net_api() {
+fn test_invalid_api_key() {
     let ret = helper_test_city_id("moscow,ru", "123");
     assert_eq!(0, ret.id);
     assert_eq!(401, ret.cod);
